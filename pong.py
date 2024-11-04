@@ -135,7 +135,7 @@ while running:
     if pygame.sprite.spritecollide(ball_sprite,player_1, False):
         ball_sprite.move_horizontal = abs(ball_sprite.move_horizontal)
     elif pygame.sprite.spritecollide(ball_sprite,player_2,False):
-        ball_sprite.move_vertical = abs(ball_sprite.move_vertical)
+        ball_sprite.move_horizontal = abs(ball_sprite.move_horizontal)
         
         
     
