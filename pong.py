@@ -4,7 +4,7 @@ import os
 
 #constants 
 
-SCREEN_WIDTH = 900
+SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
 
 pygame.init()
@@ -19,8 +19,8 @@ class Ball(pygame.sprite.Sprite):
         super().__init__()
         self.image = pygame.image.load(os.path.join("images", "ball.png")).convert_alpha()
         self.rect = self.image.get_rect(center=(400, 300))
-        self.move_horizontal = 3
-        self.move_vertical = 3  # Initial movement speed and direction
+        self.move_horizontal = 2
+        self.move_vertical = 1  # Initial movement speed and direction
 
     def animation(self):
         # Move the ball horizontally
@@ -29,19 +29,24 @@ class Ball(pygame.sprite.Sprite):
         self.rect.y += self.move_vertical
 
         # Check if the ball hits the left or right edge of the screen
-        if self.rect.right >= (SCREEN_WIDTH) or self.rect.left <= 0:
-            self.move_horizontal = -self.move_horizontal  # Reverse the direction
-        elif self.rect.bottom >=(SCREEN_HEIGHT) or self.rect.top <=0:
+        if self.rect.bottom >=(SCREEN_HEIGHT) or self.rect.top <=0:
             self.move_vertical = -self.move_vertical
+
+    def collide(self, spriteGroup):
+        if pygame.sprite.spritecollide(self,spriteGroup,False):
+            self.move_horizontal = -self.move_horizontal
+
+        
 
     def update(self):
         self.animation()
+        self.collide()
 
 class Player_1(pygame.sprite.Sprite):
     def __init__(self, x, y):
         super().__init__()
 
-        self.image = pygame.image.load(os.path.join("images", "side-bar.png")).convert_alpha()
+        self.image = pygame.image.load(os.path.join("images", "red-side-bar.png")).convert_alpha()
         self.rect = self.image.get_rect()
         self.rect.x = x  # Initial x-position
         self.rect.y = y  # Initial y-position
@@ -68,7 +73,7 @@ class Player_2(pygame.sprite.Sprite):
     def __init__(self, x, y):
         super().__init__()
 
-        self.image = pygame.image.load(os.path.join("images", "side-bar.png")).convert_alpha()
+        self.image = pygame.image.load(os.path.join("images", "red-side-bar.png")).convert_alpha()
         self.rect = self.image.get_rect()
         self.rect.x = x  # Initial x-position
         self.rect.y = y  # Initial y-position
@@ -132,10 +137,10 @@ while running:
     player1_sprite = player_1.sprite
     player2_sprite = player_2.sprite
 
-    if pygame.sprite.spritecollide(ball_sprite,player_1, False):
-        ball_sprite.move_horizontal = abs(ball_sprite.move_horizontal)
-    elif pygame.sprite.spritecollide(ball_sprite,player_2,False):
-        ball_sprite.move_horizontal = abs(ball_sprite.move_horizontal)
+    if ball_sprite.rect.left == player1_sprite.rect.right:
+        ball_sprite.move_horizontal = - ball_sprite.move_horizontal
+    elif ball_sprite.rect.x == player2_sprite.rect.left:
+        ball_sprite.move_horizontal = - ball_sprite.move_horizontal
         
         
     
