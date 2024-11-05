@@ -19,8 +19,8 @@ class Ball(pygame.sprite.Sprite):
         super().__init__()
         self.image = pygame.image.load(os.path.join("images", "ball.png")).convert_alpha()
         self.rect = self.image.get_rect(center=(400, 300))
-        self.move_horizontal = 2
-        self.move_vertical = 1  # Initial movement speed and direction
+        self.move_horizontal = 4
+        self.move_vertical = 3  # Initial movement speed and direction
 
     def animation(self):
         # Move the ball horizontally
