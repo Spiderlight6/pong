@@ -40,24 +40,19 @@ class Ball(pygame.sprite.Sprite):
 
     def update(self):
         self.animation()
-        self.collide()
+        self.collide(player_sprites)
 
 class Player_1(pygame.sprite.Sprite):
-    def __init__(self, x, y):
+    def __init__(self, x, y, controls):
         super().__init__()
 
-        self.image = pygame.image.load(os.path.join("images", "red-side-bar.png")).convert_alpha()
+        self.image = pygame.image.load(os.path.join("images", "side-bar.png")).convert_alpha()
         self.rect = self.image.get_rect()
         self.rect.x = x  # Initial x-position
         self.rect.y = y  # Initial y-position
+        self.controls = controls 
 
-    def movement(self):
-        key = pygame.key.get_pressed()
-        dist = 4
-        if key[pygame.K_w]:
-            self.rect.y -= dist  # Update rect.y 
-        elif key[pygame.K_s]:
-            self.rect.y += dist  # Update rect.y 
+   
 
         # Boundary checks to prevent the player from moving off the screen
         if self.rect.top < 0:
@@ -66,53 +61,42 @@ class Player_1(pygame.sprite.Sprite):
             self.rect.bottom = SCREEN_HEIGHT
 
     def update(self):
-        self.movement()
+        keys = pygame.key.get_pressed()
+
+        if keys[self.controls['up']]:
+            self.rect.y -= 5
+        if keys[self.controls['down']]:
+            self.rect.y += 5
+        if keys[self.controls['left']]:
+            self.rect.x -= 5
+        if keys[self.controls['right']]:
+            self.rect.x += 5
 
 
-class Player_2(pygame.sprite.Sprite):
-    def __init__(self, x, y):
-        super().__init__()
+# create player's controls
+controls_player1 = {'up': pygame.K_w, 'down': pygame.K_s, 'left': pygame.K_a, 'right': pygame.K_d}
+controls_player2 = {'up': pygame.K_UP, 'down': pygame.K_DOWN, 'left': pygame.K_LEFT, 'right': pygame.K_RIGHT}
 
-        self.image = pygame.image.load(os.path.join("images", "red-side-bar.png")).convert_alpha()
-        self.rect = self.image.get_rect()
-        self.rect.x = x  # Initial x-position
-        self.rect.y = y  # Initial y-position
+#create player's sprite
+player_1 = Player_1(10, (SCREEN_HEIGHT/2),controls_player1)
+player_2 = Player_1((SCREEN_WIDTH - 50), (SCREEN_HEIGHT/2),controls_player2)
 
-    def movement(self):
-        key = pygame.key.get_pressed()
-        dist = 4
-        if key[pygame.K_UP]:
-            self.rect.y -= dist  # Update rect.y 
-        elif key[pygame.K_DOWN]:
-            self.rect.y += dist  # Update rect.y 
+#create sprite Groupe
+player_sprites = pygame.sprite.Group()
+# Add players to the sprite groupe.
+player_sprites.add(player_1,player_2)
 
-        # Boundary checks to prevent the player from moving off the screen
-        if self.rect.top < 0:
-            self.rect.top = 0
-        if self.rect.bottom > SCREEN_HEIGHT:  
-            self.rect.bottom = SCREEN_HEIGHT
-
-    def update(self):
-        self.movement()
-
-
-
-player_1 = pygame.sprite.GroupSingle()
-player_1.add(Player_1(10, (SCREEN_HEIGHT/2)))
-
-player_2 = pygame.sprite.GroupSingle()
-player_2.add(Player_2((SCREEN_WIDTH - 50), (SCREEN_HEIGHT/2)))
-
+# Create a ball group single add the ball to it
 ball = pygame.sprite.GroupSingle()
-ball.add(Ball())
+ball.add(Ball()) 
 
 
 
-
+# Create the game loop
 running = True
 
 while running:
-    screen.fill("white")
+    screen.fill("red")
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
@@ -122,28 +106,10 @@ while running:
     ball.draw(screen)
     ball.update()
 
-    # Draw player 1
-    player_1.draw(screen)
-    player_1.update()
+    # Draw players
+    player_sprites.draw(screen)
+    player_sprites.update()
 
-    # Draw player 2
-    player_2.draw(screen)
-    player_2.update()
-
-
-
-    # collision 
-    ball_sprite = ball.sprite
-    player1_sprite = player_1.sprite
-    player2_sprite = player_2.sprite
-
-    if ball_sprite.rect.left == player1_sprite.rect.right:
-        ball_sprite.move_horizontal = - ball_sprite.move_horizontal
-    elif ball_sprite.rect.x == player2_sprite.rect.left:
-        ball_sprite.move_horizontal = - ball_sprite.move_horizontal
-        
-        
-    
 
     pygame.display.update()
 
